@@ -35,6 +35,28 @@ describe('reply', () => {
     ));
   });
 
+  describe('using withBody', () => {
+    let jsonCall;
+
+    beforeEach(() => {
+      jsonCall = mock
+        .get('/foo')
+        .reply()
+        .withBody({ bar: 'baz' })
+        .withHeader('content-type', 'application/json');
+    });
+
+    it('should reply a json', () => (
+      request(mock)
+        .get('/foo')
+        .expect(200)
+        .expect((res) => {
+          res.body.bar.should.eql('baz');
+          jsonCall.calls.length.should.eql(1);
+        })
+    ));
+  });
+
   describe('with a string', () => {
     let stringCall;
 
