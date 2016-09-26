@@ -1,4 +1,4 @@
-# rodo
+# Rodo
 
 ![Rodo](http://i.ebayimg.com/images/g/PFEAAOSwmrlUsqos/s-l300.jpg)
 
@@ -64,7 +64,7 @@ var myRequest = mockServer.get('/foo');
 
 Nice! Now **Rodo** will intercept every request to `GET http://localhost:8000/foo`.
 
-### The Response
+### The response
 
 Now you want **Rodo** to return a specific response to that request:
 
