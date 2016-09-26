@@ -4,7 +4,8 @@
   "description": "Http mocking service",
   "main": "src/index.js",
   "scripts": {
-    "test": "eslint src test && mocha"
+    "test": "eslint src test && mocha",
+    "postversion": "git push && git push --tags && npm publish"
   },
   "keywords": [
     "rodo",
