@@ -21,12 +21,14 @@ function rodo(port) {
     }
   });
 
-  server.get = (path) => {
-    const builder = new Builder(path, 'GET');
-    server.rules.push(builder);
+  ['get', 'post', 'put', 'delete', 'patch'].forEach((method) => {
+    server[method] = (path) => {
+      const builder = new Builder(path, method.toUpperCase());
+      server.rules.push(builder);
 
-    return builder;
-  };
+      return builder;
+    };
+  });
 
   server.calls = [];
   server.rules = [];
