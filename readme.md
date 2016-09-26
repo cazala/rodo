@@ -104,6 +104,10 @@ Specifies the Http method, should be one of GET, POST, PUT, DELETE, PATCH.
 
 Will intercept a specific path.
 
+#### `.havingQuery(query)`
+
+Will filter by query object params.
+
 #### `.havingHeader(name, value)`
 
 Will filter by header, only requests with the specified header and value will be intercepted.
