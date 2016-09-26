@@ -1,23 +1,29 @@
-const request = require('./request');
+'use strict';
 
-function rodo(port, hostname) {
-  const express = require('express');
+const Builder = require('./builder');
+const http = require('http');
 
-  const app = express();
-  const server = app.listen(port, hostname);
+function rodo(port) {
+  const server = http.createServer((req, res) => {
+    const rule = rules.find(a => a.match(req));
 
-  return {
-    get: (path) => {
-      const mock = request();
+    rule.resolve(res);
+  });
 
-      app.get(path, (req, res) => {
-        mock.run(req, res);
-      });
+  server.listen(port);
 
-      return mock.builder;
-    },
-    clean: () => { server.close(); },
+  const rules = [];
+
+  server.get = (path) => {
+    const builder = new Builder(path, 'GET');
+    rules.push(builder);
+
+    return builder;
   };
+
+  server.clean = () => server.close();
+
+  return server;
 }
 
 module.exports = rodo;

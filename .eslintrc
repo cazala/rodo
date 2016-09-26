@@ -1,7 +1,13 @@
 {
+  "env": {
+    "node": true,
+    "es6": true,
+    "mocha": true
+  },
   "extends": "airbnb",
   "rules": {
     "global-require": [0],
-    "no-use-before-define": [0]
+    "no-use-before-define": [0],
+    "strict": [0, "global"]
   }
 }
