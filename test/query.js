@@ -37,7 +37,7 @@ describe('query', () => {
     it('should recieve the call if more params present', () => (
       request(mock)
         .get('/foo')
-        .query({ bar: 'baz', 'quux': 'qux' })
+        .query({ bar: 'baz', quux: 'qux' })
         .expect(200)
         .expect(() => {
           myCall.calls.length.should.eql(1);
