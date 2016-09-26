@@ -9,7 +9,7 @@ function Builder(path, method) {
 }
 
 Builder.prototype.reply = function reply(body) {
-  const response = new Response(body);
+  const response = new Response(this, body);
   this.response = response;
 
   return response;

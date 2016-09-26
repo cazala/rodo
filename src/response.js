@@ -1,8 +1,10 @@
 'use strict';
 
-function Response(body) {
+function Response(builder, body) {
+  this.builder = builder;
   this.body = body;
   this.headers = {};
+  this.calls = [];
 
   if (typeof this.body !== 'string') {
     this.body = JSON.stringify(this.body);
@@ -11,6 +13,8 @@ function Response(body) {
 
 Response.prototype.withHeader = function withHeader(name, value) {
   this.headers[name] = value;
+
+  return this;
 };
 
 Response.prototype.send = function send(res) {

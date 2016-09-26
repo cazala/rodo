@@ -15,8 +15,10 @@ describe('reply', () => {
   ));
 
   describe('with a json', () => {
+    let jsonCall;
+
     beforeEach(() => {
-      mock
+      jsonCall = mock
         .get('/foo')
         .reply({ bar: 'baz' })
         .withHeader('content-type', 'application/json');
@@ -28,13 +30,16 @@ describe('reply', () => {
         .expect(200)
         .expect((res) => {
           res.body.bar.should.eql('baz');
+          jsonCall.calls.length.should.eql(1);
         })
     ));
   });
 
   describe('with a string', () => {
+    let stringCall;
+
     beforeEach(() => {
-      mock
+      stringCall = mock
         .get('/foo')
         .reply('bar');
     });
@@ -45,7 +50,16 @@ describe('reply', () => {
         .expect(200)
         .expect((res) => {
           res.text.should.eql('bar');
+          stringCall.calls.length.should.eql(1);
         })
+    ));
+  });
+
+  describe('when no rule assigned', () => {
+    it('should reply with a 404', () => (
+      request(mock)
+        .get('/foo')
+        .expect(404)
     ));
   });
 });
