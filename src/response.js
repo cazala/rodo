@@ -1,13 +1,11 @@
 'use strict';
 
 function Response(body) {
-  const self = this;
+  this.body = body;
+  this.headers = {};
 
-  self.body = body;
-  self.headers = {};
-
-  if (typeof self.body !== 'string') {
-    self.body = JSON.stringify(self.body);
+  if (typeof this.body !== 'string') {
+    this.body = JSON.stringify(this.body);
   }
 }
 

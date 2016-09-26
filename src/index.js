@@ -5,23 +5,26 @@ const http = require('http');
 
 function rodo(port) {
   const server = http.createServer((req, res) => {
-    const rule = rules.find(a => a.match(req));
+    const rule = server.rules.find(a => a.match(req));
 
+    server.calls.push(req);
     rule.resolve(res);
   });
 
-  server.listen(port);
-
-  const rules = [];
-
   server.get = (path) => {
     const builder = new Builder(path, 'GET');
-    rules.push(builder);
+    server.rules.push(builder);
 
     return builder;
   };
 
+  server.calls = [];
+  server.rules = [];
   server.clean = () => server.close();
+
+  if (port) {
+    server.listen(port);
+  }
 
   return server;
 }

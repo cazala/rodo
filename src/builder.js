@@ -4,10 +4,8 @@ const url = require('url');
 const Response = require('./response');
 
 function Builder(path, method) {
-  const self = this;
-
-  self.path = path;
-  self.method = method || 'GET';
+  this.path = path;
+  this.method = method || 'GET';
 }
 
 Builder.prototype.reply = function reply(body) {
