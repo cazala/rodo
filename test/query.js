@@ -20,14 +20,14 @@ describe('query', () => {
     beforeEach(() => {
       myCall = mock
         .get('/foo')
-          .havingQuery({ bar: 'baz' })
+          .havingQuery({ bar: 'baz', baz: 123 })
         .reply();
     });
 
     it('should recieve the call', () => (
       request(mock)
         .get('/foo')
-        .query({ bar: 'baz' })
+        .query({ bar: 'baz', baz: 123 })
         .expect(200)
         .expect(() => {
           myCall.calls.length.should.eql(1);
@@ -37,7 +37,7 @@ describe('query', () => {
     it('should recieve the call if more params present', () => (
       request(mock)
         .get('/foo')
-        .query({ bar: 'baz', quux: 'qux' })
+        .query({ bar: 'baz', baz: 123, quux: 'qux' })
         .expect(200)
         .expect(() => {
           myCall.calls.length.should.eql(1);

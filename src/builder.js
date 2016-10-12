@@ -56,10 +56,18 @@ Builder.prototype.match = function match(req) {
   const isMatch = [
     this.path === urlObject.pathname,
     Object.keys(this.headers).every(key => req.headers[key] === this.headers[key]),
-    Object.keys(this.query).every(key => query[key] === this.query[key]),
+    Object.keys(this.query).every(key => query[key] === getKey(this.query[key])),
   ].every(rule => rule);
 
   return isMatch;
+
+  function getKey(key) {
+    if (key === undefined || key === null) {
+      return key;
+    }
+
+    return key.toString();
+  }
 };
 
 module.exports = Builder;
