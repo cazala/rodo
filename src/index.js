@@ -14,6 +14,7 @@ function rodo(port, hostname) {
 
       if (rule.response) {
         rule.response.calls = rule.calls;
+        setInvocationsCount(rule.response);
         return;
       }
     }
@@ -47,6 +48,18 @@ function rodo(port, hostname) {
   }
 
   return server;
+}
+
+function setInvocationsCount(obj) {
+  const callsLength = obj.calls.length;
+
+  /* eslint-disable no-param-reassign */
+  obj.invokedCount = callsLength;
+  obj.invoked = callsLength > 0;
+  obj.invokedOnce = callsLength === 1;
+  obj.invokedTwice = callsLength === 2;
+  obj.invokedThrice = callsLength === 3;
+  /* eslint-enable no-param-reassign */
 }
 
 module.exports = rodo;

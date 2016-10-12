@@ -5,6 +5,8 @@ function Response(builder, body) {
   this.body = body;
   this.headers = {};
   this.calls = [];
+  this.invoked = this.invokedOnce = this.invokedTwice = this.invokedThrice = false;
+  this.invokedCount = 0;
   this.status = 200;
 
   if (body) {
