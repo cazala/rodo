@@ -34,7 +34,7 @@ fetch('http://localhost:8000/foo')
   .then((res) => {
     assert.equal(res.bar, 'baz');
     assert.equal(myCall.calls.length, 1);
-  })
+  });
 ```
 
 ## Getting started
