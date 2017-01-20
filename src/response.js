@@ -8,6 +8,7 @@ function Response(builder, body) {
   this.invoked = this.invokedOnce = this.invokedTwice = this.invokedThrice = false;
   this.invokedCount = 0;
   this.status = 200;
+  this.delay = 0;
 
   if (body) {
     this.withBody(body);
@@ -34,21 +35,30 @@ Response.prototype.withStatus = function withStatus(status) {
   return this;
 };
 
+Response.prototype.withDelay = function withDelay(delay) {
+  this.delay = delay;
+
+  return this;
+};
+
+
 Response.prototype.send = function send(res) {
   return new Promise((resolve, reject) => {
-    Object.keys(this.headers)
-      .forEach(key => res.setHeader(key, this.headers[key]));
+    setTimeout(() => {
+      Object.keys(this.headers)
+        .forEach(key => res.setHeader(key, this.headers[key]));
 
-    // eslint-disable-next-line no-param-reassign
-    res.statusCode = this.status;
-    res.end(this.body, (err) => {
-      if (err) {
-        reject();
-        return;
-      }
+      // eslint-disable-next-line no-param-reassign
+      res.statusCode = this.status;
+      res.end(this.body, (err) => {
+        if (err) {
+          reject();
+          return;
+        }
 
-      resolve();
-    });
+        resolve();
+      });
+    }, this.delay);
   });
 };
 

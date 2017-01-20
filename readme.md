@@ -134,6 +134,10 @@ Will return the specified body with the response.
 
 Will change the status code to the one specified.
 
+#### `.withDelay(ms)`
+
+Will delay the response.
+
 ## License
 
 MIT
