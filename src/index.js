@@ -8,7 +8,7 @@ function rodo(port, hostname) {
   const server = http.createServer((req, res) => {
     const rule = server.rules.find(a => a.match(req));
 
-    middlewares.forEach(m => m(req, res));
+    middlewares.forEach(m => m(req, res, () => {}));
 
     if (rule) {
       server.calls.push(rule);

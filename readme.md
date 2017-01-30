@@ -138,6 +138,18 @@ Will change the status code to the one specified.
 
 Will delay the response.
 
+### Other utilities
+
+#### `.use((req, res) => { })`
+
+Will add a middleware to the server.
+
+Example:
+
+```js
+mockServer.use(morgan('dev'));
+```
+
 ## License
 
 MIT
