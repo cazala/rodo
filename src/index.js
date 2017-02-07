@@ -47,9 +47,12 @@ function rodo(port, hostname) {
     return builder;
   };
 
-  server.calls = [];
-  server.rules = [];
-  server.clean = () => server.close();
+  server.clean = () => {
+    server.calls = [];
+    server.rules = [];
+  };
+
+  server.clean();
 
   if (port) {
     server.listen(port, hostname);

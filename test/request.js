@@ -1,7 +1,7 @@
 'use strict';
 
 const rodo = require('../src');
-const request = require('supertest-as-promised');
+const request = require('supertest');
 
 describe('request', () => {
   let mock;
