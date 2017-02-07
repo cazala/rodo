@@ -90,10 +90,16 @@ myResponse.calls; // [...calls]
 
 You are all set, now **Rodo** will start intercepting all that requests and will return the response that you specify.
 
-### Want to kill the server?
+### If you now want to clear the results and start again
 
 ```js
 mockServer.clean();
+```
+
+### Want to kill the server?
+
+```js
+mockServer.close();
 ```
 
 ## API
