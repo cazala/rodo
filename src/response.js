@@ -5,7 +5,10 @@ function Response(builder, body) {
   this.body = body;
   this.headers = {};
   this.calls = [];
-  this.invoked = this.invokedOnce = this.invokedTwice = this.invokedThrice = false;
+  this.invoked = false;
+  this.invokedOnce = false;
+  this.invokedTwice = false;
+  this.invokedThrice = false;
   this.invokedCount = 0;
   this.status = 200;
   this.delay = 0;
@@ -40,7 +43,6 @@ Response.prototype.withDelay = function withDelay(delay) {
 
   return this;
 };
-
 
 Response.prototype.send = function send(res) {
   return new Promise((resolve, reject) => {

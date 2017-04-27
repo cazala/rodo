@@ -1,4 +1,4 @@
-# Rodo
+# Rodo [![Greenkeeper badge](https://badges.greenkeeper.io/nescalante/rodo.svg)](https://greenkeeper.io/)
 
 ![Rodo](http://i.ebayimg.com/images/g/PFEAAOSwmrlUsqos/s-l300.jpg)
 
