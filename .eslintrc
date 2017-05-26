@@ -4,7 +4,7 @@
     "es6": true,
     "mocha": true
   },
-  "extends": "airbnb",
+  "extends": "airbnb-base",
   "rules": {
     "global-require": [0],
     "no-use-before-define": [0],
