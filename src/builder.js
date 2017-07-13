@@ -57,7 +57,7 @@ Builder.prototype.match = function match(req) {
     this.path === urlObject.pathname,
     this.method === req.method,
     Object.keys(this.headers).every(key => req.headers[key] === this.headers[key]),
-    Object.keys(this.query).every(key => query[key] === getKey(this.query[key])),
+    Object.keys(this.query).every(key => getKey(query[key]) === getKey(this.query[key])),
   ].every(rule => rule);
 
   return isMatch;
