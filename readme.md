@@ -2,7 +2,7 @@
 
 ![Rodo](http://i.ebayimg.com/images/g/PFEAAOSwmrlUsqos/s-l300.jpg)
 
-> Http mocking service
+> HTTP mocking service
 
 **Rodo** can be used to create a real mocked API with an specific port and host.
 
