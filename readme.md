@@ -6,7 +6,7 @@
 
 **Rodo** can be used to create a real mocked API with an specific port and host.
 
-The main difference with other Http mocking libraries like [`nock`](https://github.com/node-nock/nock) is that **Rodo** creates a real Http server instead of overriding the behavior of Node Http objects.
+The main difference with other HTTP mocking libraries like [`nock`](https://github.com/node-nock/nock) is that **Rodo** creates a real HTTP server instead of overriding the behavior of Node HTTP objects.
 
 ## Install
 
@@ -110,7 +110,7 @@ The filtering process for a specific request:
 
 #### `.havingMethod(method)`
 
-Specifies the Http method, should be one of GET, POST, PUT, DELETE, PATCH.
+Specifies the HTTP method, should be one of GET, POST, PUT, DELETE, PATCH.
 
 #### `.havingPath(path)`
 
