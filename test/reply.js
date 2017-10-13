@@ -1,6 +1,7 @@
 'use strict';
 
 const rodo = require('../src');
+const Response = require('../src/response');
 const request = require('supertest');
 
 describe('reply', () => {
@@ -73,6 +74,68 @@ describe('reply', () => {
         .expect((res) => {
           res.text.should.eql('bar');
           stringCall.calls.length.should.eql(1);
+        })
+    ));
+  });
+
+  describe('with a function', () => {
+    let functionCall;
+    let getBody;
+
+    beforeEach(() => {
+      getBody = () => 'bar';
+      functionCall = mock
+        .get('/foo')
+        .reply(getBody);
+    });
+
+    it('should reply with function response', () => (
+      request(mock)
+        .get('/foo')
+        .expect(200)
+        .expect((res) => {
+          res.text.should.eql('bar');
+          functionCall.calls.length.should.eql(1);
+        })
+    ));
+  });
+
+  describe('with a custom response', () => {
+    let functionCall;
+
+    beforeEach(() => {
+      functionCall = mock
+        .get('/foo')
+        .then(new Response(null, 'bar'));
+    });
+
+    it('should reply with body', () => (
+      request(mock)
+        .get('/foo')
+        .expect(200)
+        .expect((res) => {
+          res.text.should.eql('bar');
+          functionCall.calls.length.should.eql(1);
+        })
+    ));
+  });
+
+  describe('with a custom response with status', () => {
+    let functionCall;
+
+    beforeEach(() => {
+      functionCall = mock
+        .get('/foo')
+        .then(new Response(null, 'bar').withStatus(228));
+    });
+
+    it('should reply with body and right status', () => (
+      request(mock)
+        .get('/foo')
+        .expect(228)
+        .expect((res) => {
+          res.text.should.eql('bar');
+          functionCall.calls.length.should.eql(1);
         })
     ));
   });

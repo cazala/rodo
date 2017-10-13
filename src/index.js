@@ -12,7 +12,7 @@ function rodo(port, hostname) {
 
     if (rule) {
       server.calls.push(rule);
-      rule.resolve(res);
+      rule.resolve(req, res);
       rule.calls.push(req);
 
       if (rule.response) {

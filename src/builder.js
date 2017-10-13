@@ -19,6 +19,12 @@ Builder.prototype.reply = function reply(body) {
   return response;
 };
 
+Builder.prototype.then = function then(response) {
+  this.response = response;
+
+  return response;
+};
+
 Builder.prototype.havingMethod = function havingMethod(method) {
   this.method = method;
 
@@ -43,9 +49,9 @@ Builder.prototype.havingQuery = function havingQuery(query) {
   return this;
 };
 
-Builder.prototype.resolve = function resolve(res) {
+Builder.prototype.resolve = function resolve(req, res) {
   if (this.response) {
-    this.response.send(res);
+    this.response.send(req, res);
   }
 };
 

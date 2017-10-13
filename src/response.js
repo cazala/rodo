@@ -25,7 +25,7 @@ Response.prototype.withHeader = function withHeader(name, value) {
 };
 
 Response.prototype.withBody = function withBody(body) {
-  if (typeof body !== 'string') {
+  if (typeof body !== 'string' && typeof body !== 'function') {
     this.body = JSON.stringify(body);
   }
 
@@ -44,7 +44,15 @@ Response.prototype.withDelay = function withDelay(delay) {
   return this;
 };
 
-Response.prototype.send = function send(res) {
+function answer(body, req) {
+  if (typeof body === 'function') {
+    return body(req);
+  }
+
+  return body;
+}
+
+Response.prototype.send = function send(req, res) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       Object.keys(this.headers)
@@ -52,7 +60,9 @@ Response.prototype.send = function send(res) {
 
       // eslint-disable-next-line no-param-reassign
       res.statusCode = this.status;
-      res.end(this.body, (err) => {
+
+      const body = answer(this.body, req);
+      res.end(body, (err) => {
         if (err) {
           reject();
           return;
