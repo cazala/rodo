@@ -1,5 +1,7 @@
 {
   "rules": {
-    "import/no-extraneous-dependencies": [0]
+    "import/no-extraneous-dependencies": [0],
+    "no-return-assign": [0],
+    "indent": [0]
   }
 }
