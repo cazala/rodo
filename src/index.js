@@ -6,25 +6,34 @@ const http = require('http');
 function rodo(port, hostname) {
   const middlewares = [];
   const server = http.createServer((req, res) => {
-    const rule = server.rules.find(a => a.match(req));
+    const body = [];
 
-    middlewares.forEach(m => m(req, res, () => {}));
+    req
+      .on('data', (chunk) => {
+        body.push(chunk);
+      })
+      .on('end', () => {
+        req.body = Buffer.concat(body).toString();
+        const rule = server.rules.find(a => a.match(req));
 
-    if (rule) {
-      server.calls.push(rule);
-      rule.resolve(req, res);
-      rule.calls.push(req);
+        middlewares.forEach(m => m(req, res, () => {}));
 
-      if (rule.response) {
-        rule.response.calls = rule.calls;
-        setInvocationsCount(rule.response);
-        return;
-      }
-    }
+        if (rule) {
+          server.calls.push(rule);
+          rule.resolve(req, res);
+          rule.calls.push(req);
 
-    // eslint-disable-next-line no-param-reassign
-    res.statusCode = 404;
-    res.end();
+          if (rule.response) {
+            rule.response.calls = rule.calls;
+            setInvocationsCount(rule.response);
+            return;
+          }
+        }
+
+        // eslint-disable-next-line no-param-reassign
+        res.statusCode = 404;
+        res.end();
+      });
   });
 
   server.use = function use(middleware) {

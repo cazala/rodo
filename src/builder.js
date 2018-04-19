@@ -43,6 +43,12 @@ Builder.prototype.havingHeader = function havingHeader(name, value) {
   return this;
 };
 
+Builder.prototype.havingBody = function havingBody(body) {
+  this.body = typeof body === 'string' ? body : JSON.stringify(body);
+
+  return this;
+};
+
 Builder.prototype.havingQuery = function havingQuery(query) {
   this.query = query;
 
@@ -62,6 +68,7 @@ Builder.prototype.match = function match(req) {
   const isMatch = [
     this.path === urlObject.pathname,
     this.method === req.method,
+    (!this.body || this.body === req.body),
     Object.keys(this.headers).every(key => req.headers[key] === this.headers[key]),
     Object.keys(this.query).every(key => getKey(query[key]) === getKey(this.query[key])),
   ].every(rule => rule);

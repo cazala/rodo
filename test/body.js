@@ -3,7 +3,7 @@
 const rodo = require('../src');
 const request = require('supertest');
 
-describe('method', () => {
+describe('body', () => {
   let mock;
 
   beforeEach(() => (
@@ -14,37 +14,32 @@ describe('method', () => {
     mock.clean()
   ));
 
-  describe('with a method', () => {
+  describe('filtering by body', () => {
     let myCall;
 
     beforeEach(() => {
       myCall = mock
-        .patch('/foo')
-        .reply();
+        .post('/foo')
+        .havingBody({ foo: 'bar' })
+        .reply({
+          baz: 'quux',
+        });
     });
 
-    it('should get the call', () => (
+    it('should receive the call', () => (
       request(mock)
-        .patch('/foo')
+        .post('/foo')
+        .send({ foo: 'bar' })
         .expect(200)
         .expect(() => {
           myCall.calls.length.should.eql(1);
         })
     ));
-  });
 
-  describe('filtering by method', () => {
-    let myCall;
-
-    beforeEach(() => {
-      myCall = mock
-        .patch('/foo')
-        .reply();
-    });
-
-    it('should not get the call', () => (
+    it('should not receive the call', () => (
       request(mock)
         .post('/foo')
+        .send({ duck: 'pet' })
         .expect(404)
         .expect(() => {
           myCall.calls.length.should.eql(0);
