@@ -112,6 +112,10 @@ The filtering process for a specific request:
 
 Specifies the HTTP method, should be one of GET, POST, PUT, DELETE, PATCH.
 
+#### `.havingBody(body)`
+
+Specifies the body, can be an object or a string.
+
 #### `.havingPath(path)`
 
 Will intercept a specific path.
