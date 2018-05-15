@@ -12,6 +12,20 @@ function Builder(path, method) {
   this.calls = [];
 }
 
+Builder.prototype.returns = function returns(response) {
+  this.response = response;
+
+  return response;
+};
+
+Builder.prototype.then = function then(callback) {
+  this.callback = callback;
+
+  return new Promise((promiseResolveFn) => {
+    this.promiseResolveFn = promiseResolveFn;
+  });
+};
+
 Builder.prototype.reply = function reply(body) {
   const response = new Response(this, body);
   this.response = response;
@@ -19,7 +33,7 @@ Builder.prototype.reply = function reply(body) {
   return response;
 };
 
-Builder.prototype.then = function then(response) {
+Builder.prototype.returns = function returns(response) {
   this.response = response;
 
   return response;

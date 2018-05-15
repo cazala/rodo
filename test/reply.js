@@ -106,7 +106,7 @@ describe('reply', () => {
     beforeEach(() => {
       functionCall = mock
         .get('/foo')
-        .then(new Response(null, 'bar'));
+        .returns(new Response(null, 'bar'));
     });
 
     it('should reply with body', () => (
@@ -126,7 +126,7 @@ describe('reply', () => {
     beforeEach(() => {
       functionCall = mock
         .get('/foo')
-        .then(new Response(null, 'bar').withStatus(228));
+        .returns(new Response(null, 'bar').withStatus(228));
     });
 
     it('should reply with body and right status', () => (

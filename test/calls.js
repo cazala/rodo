@@ -17,11 +17,11 @@ describe('calls', () => {
   describe('not called', () => {
     let myCall;
 
-    beforeEach(() => (
+    beforeEach(() => {
       myCall = mock
         .get('/foo')
-        .reply()
-    ));
+        .reply();
+    });
 
     it('should not be called', () => {
       myCall.invoked.should.eql(false);
@@ -35,11 +35,11 @@ describe('calls', () => {
   describe('called once', () => {
     let myCall;
 
-    beforeEach(() => (
+    beforeEach(() => {
       myCall = mock
         .get('/foo')
-        .reply()
-    ));
+        .reply();
+    });
 
     beforeEach(() => (
       request(mock)
@@ -58,11 +58,11 @@ describe('calls', () => {
   describe('called twice', () => {
     let myCall;
 
-    beforeEach(() => (
+    beforeEach(() => {
       myCall = mock
         .get('/foo')
-        .reply()
-    ));
+        .reply();
+    });
 
     beforeEach(() => (
       Promise.all([
@@ -83,11 +83,11 @@ describe('calls', () => {
   describe('called thrice', () => {
     let myCall;
 
-    beforeEach(() => (
+    beforeEach(() => {
       myCall = mock
         .get('/foo')
-        .reply()
-    ));
+        .reply();
+    });
 
     beforeEach(() => (
       Promise.all([

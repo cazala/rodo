@@ -57,4 +57,34 @@ describe('request', () => {
         })
     ));
   });
+
+  describe('promises', () => {
+    let myCall;
+
+    beforeEach(() => {
+      myCall = mock
+        .request()
+          .havingMethod('GET')
+          .havingPath('/foo')
+        .reply()
+          .withBody({ bar: 'baz' })
+          .withHeader('content-type', 'application/json');
+    });
+
+    it('should resolve the promise once', (done) => {
+      myCall.then(() => {
+        done();
+      });
+
+      request(mock)
+        .get('/foo')
+        .expect(200)
+        .then(() => {}); // required for supertest
+
+      request(mock)
+        .get('/foo')
+        .expect(200)
+        .then(() => {}); // required for supertest
+    });
+  });
 });

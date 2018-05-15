@@ -18,6 +18,10 @@ function Response(builder, body) {
   }
 }
 
+Response.prototype.then = function then(callback) {
+  return this.builder.then(callback);
+};
+
 Response.prototype.withHeader = function withHeader(name, value) {
   this.headers[name] = value;
 
@@ -64,12 +68,18 @@ Response.prototype.send = function send(req, res) {
       const body = answer(this.body, req);
       res.end(body, (err) => {
         if (err) {
-          reject();
+          reject(err);
           return;
         }
 
-        resolve();
+        resolve(body);
       });
+
+      if (this.builder && this.builder.callback && !this.builder.callbackCalled) {
+        this.builder.callbackCalled = true;
+        this.builder.callback(req);
+        this.builder.promiseResolveFn(req);
+      }
     }, this.delay);
   });
 };
