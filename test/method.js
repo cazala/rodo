@@ -52,3 +52,34 @@ describe('method', () => {
     ));
   });
 });
+
+describe('method when server is instantiated with a default delay', () => {
+  const testDelay = 1000;
+  let mock;
+
+  before(() => {
+    mock = rodo(undefined, undefined, { defaultResponseDelay: testDelay });
+  });
+
+  after(() => (
+    mock.clean()
+  ));
+
+  it('should have the expected delay value', () => {
+    const myCall = mock
+      .patch('/foo')
+      .reply();
+
+    myCall.delay.should.equal(testDelay);
+  });
+
+  it('should overwrite default delay when withDelay is used', () => {
+    const newDelay = 2000;
+    const myCall = mock
+      .patch('/foo')
+      .reply()
+      .withDelay(newDelay);
+
+    myCall.delay.should.equal(newDelay);
+  });
+});

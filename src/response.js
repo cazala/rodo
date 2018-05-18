@@ -1,6 +1,6 @@
 'use strict';
 
-function Response(builder, body) {
+function Response(builder, body, options) {
   this.builder = builder;
   this.body = body;
   this.headers = {};
@@ -11,7 +11,8 @@ function Response(builder, body) {
   this.invokedThrice = false;
   this.invokedCount = 0;
   this.status = 200;
-  this.delay = 0;
+  this.options = (typeof options !== 'undefined') ? options : {};
+  this.delay = this.options.defaultDelay || 0;
 
   if (body) {
     this.withBody(body);

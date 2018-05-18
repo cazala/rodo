@@ -102,6 +102,17 @@ mockServer.clean();
 mockServer.close();
 ```
 
+## Extra server options
+
+Aside from port and hostname, when instatiating the **Rodo** server you can optionally pass an object with any of these
+extra options:
+
+#### defaultResponseDelay
+
+Instead of using `.withDelay` explicitly on each of your response methods, you can use this option to set a default delay that
+will be automatically applied to all of them. And if you have a case that needs a different value, you can still use `.withDelay`
+to overwrite the default.
+
 ## API
 
 ### Request methods

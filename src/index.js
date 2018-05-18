@@ -3,8 +3,13 @@
 const Builder = require('./builder');
 const http = require('http');
 
-function rodo(port, hostname) {
+function rodo(port, hostname, options) {
   const middlewares = [];
+  const extraOptions = (typeof options !== 'undefined') ? options : {};
+  const builderOptions = {
+    defaultResponseDelay: extraOptions.defaultResponseDelay,
+  };
+
   const server = http.createServer((req, res) => {
     const body = [];
 
@@ -43,7 +48,7 @@ function rodo(port, hostname) {
 
   ['get', 'post', 'put', 'delete', 'patch'].forEach((method) => {
     server[method] = (path) => {
-      const builder = new Builder(path, method.toUpperCase());
+      const builder = new Builder(path, method.toUpperCase(), builderOptions);
       server.rules.push(builder);
 
       return builder;
@@ -51,7 +56,7 @@ function rodo(port, hostname) {
   });
 
   server.request = function request() {
-    const builder = new Builder();
+    const builder = new Builder(undefined, undefined, builderOptions);
     server.rules.push(builder);
 
     return builder;

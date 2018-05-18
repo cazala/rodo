@@ -20,11 +20,11 @@ describe('request', () => {
     beforeEach(() => {
       jsonCall = mock
         .request()
-          .havingMethod('GET')
-          .havingPath('/foo')
+        .havingMethod('GET')
+        .havingPath('/foo')
         .reply()
-          .withBody({ bar: 'baz' })
-          .withHeader('content-type', 'application/json');
+        .withBody({ bar: 'baz' })
+        .withHeader('content-type', 'application/json');
     });
 
     it('should reply a json', () => (
@@ -44,8 +44,8 @@ describe('request', () => {
     beforeEach(() => {
       myCall = mock
         .request()
-          .havingMethod('GET')
-          .havingPath('/foo');
+        .havingMethod('GET')
+        .havingPath('/foo');
     });
 
     it('should reply a json', () => (
@@ -88,3 +88,39 @@ describe('request', () => {
     });
   });
 });
+
+describe('request when server is instantiated with a default delay', () => {
+  const testDelay = 1000;
+  let mock;
+
+  before(() => {
+    mock = rodo(undefined, undefined, { defaultResponseDelay: testDelay });
+  });
+
+  after(() => (
+    mock.clean()
+  ));
+
+  it('should have the expected delay value', () => {
+    const jsonCall = mock
+      .request()
+      .havingMethod('GET')
+      .havingPath('/foo')
+      .reply();
+
+    jsonCall.delay.should.equal(testDelay);
+  });
+
+  it('should overwrite default delay when withDelay is used', () => {
+    const newDelay = 2000;
+    const jsonCall = mock
+      .request()
+      .havingMethod('GET')
+      .havingPath('/foo')
+      .reply()
+      .withDelay(newDelay);
+
+    jsonCall.delay.should.equal(newDelay);
+  });
+});
+

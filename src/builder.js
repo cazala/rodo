@@ -4,12 +4,16 @@ const url = require('url');
 const querystring = require('querystring');
 const Response = require('./response');
 
-function Builder(path, method) {
+function Builder(path, method, options) {
   this.path = path;
   this.method = method || 'GET';
   this.headers = {};
   this.query = {};
   this.calls = [];
+  this.options = (typeof options !== 'undefined') ? options : {};
+  this.responseOptions = {
+    defaultDelay: this.options.defaultResponseDelay,
+  };
   this.invoked = false;
   this.invokedOnce = false;
   this.invokedTwice = false;
@@ -32,7 +36,7 @@ Builder.prototype.then = function then(callback) {
 };
 
 Builder.prototype.reply = function reply(body) {
-  const response = new Response(this, body);
+  const response = new Response(this, body, this.responseOptions);
   this.response = response;
 
   return response;
