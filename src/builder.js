@@ -10,6 +10,11 @@ function Builder(path, method) {
   this.headers = {};
   this.query = {};
   this.calls = [];
+  this.invoked = false;
+  this.invokedOnce = false;
+  this.invokedTwice = false;
+  this.invokedThrice = false;
+  this.invokedCount = 0;
 }
 
 Builder.prototype.returns = function returns(response) {

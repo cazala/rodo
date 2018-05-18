@@ -26,6 +26,7 @@ function rodo(port, hostname) {
           if (rule.response) {
             rule.response.calls = rule.calls;
             setInvocationsCount(rule.response);
+            setInvocationsCount(rule);
             return;
           }
         }
