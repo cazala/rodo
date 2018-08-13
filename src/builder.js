@@ -67,7 +67,7 @@ Builder.prototype.havingHeader = function havingHeader(name, value) {
 };
 
 Builder.prototype.havingBody = function havingBody(body) {
-  this.body = typeof body === 'string' ? body : JSON.stringify(body);
+  this.body = typeof body === 'string' || typeof body === 'function' ? body : JSON.stringify(body);
 
   return this;
 };
@@ -91,7 +91,9 @@ Builder.prototype.match = function match(req) {
   const isMatch = [
     this.path === urlObject.pathname,
     this.method === req.method,
-    (!this.body || this.body === req.body),
+    (typeof this.body === 'function' ?
+      this.body(req.body) :
+      !this.body || this.body === req.body),
     Object.keys(this.headers).every(key => req.headers[key] === this.headers[key]),
     Object.keys(this.query).every(key => getKey(query[key]) === getKey(this.query[key])),
   ].every(rule => rule);

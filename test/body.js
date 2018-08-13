@@ -46,4 +46,37 @@ describe('body', () => {
         })
     ));
   });
+
+  describe('using a func', () => {
+    let myCall;
+
+    beforeEach(() => {
+      myCall = mock
+        .post('/foo')
+        .havingBody(body => JSON.parse(body).foo === 'bar')
+        .reply({
+          baz: 'quux',
+        });
+    });
+
+    it('should receive the call', () => (
+      request(mock)
+        .post('/foo')
+        .send({ foo: 'bar' })
+        .expect(200)
+        .expect(() => {
+          myCall.calls.length.should.eql(1);
+        })
+    ));
+
+    it('should not receive the call', () => (
+      request(mock)
+        .post('/foo')
+        .send({ duck: 'pet' })
+        .expect(404)
+        .expect(() => {
+          myCall.calls.length.should.eql(0);
+        })
+    ));
+  });
 });
