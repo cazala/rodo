@@ -3,7 +3,13 @@
 const Builder = require('./builder');
 const http = require('http');
 
+const instances = {};
+
 function rodo(port, hostname, options) {
+  if (port && instances[port]) {
+    return instances[port];
+  }
+
   const middlewares = [];
   const extraOptions = (typeof options !== 'undefined') ? options : {};
   const builderOptions = {
@@ -67,10 +73,15 @@ function rodo(port, hostname, options) {
     server.rules = [];
   };
 
+  server.on('close', () => {
+    delete instances[port];
+  });
+
   server.clean();
 
   if (port) {
     server.listen(port, hostname);
+    instances[port] = server;
   }
 
   return server;
