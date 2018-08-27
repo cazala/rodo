@@ -70,11 +70,11 @@ function rodo(port, hostname, options) {
 
   server.clean = ({ validatePending = false } = {}) => {
     if (validatePending) {
-      server.rules.forEach((rule) => {
-        if (!server.calls.some(call => call === rule)) {
-          throw new Error(`mock not executed: ${rule.method} ${rule.path}`);
-        }
-      });
+      const pendingRules = server.rules.filter(rule => !server.calls.some(call => call === rule));
+
+      if (pendingRules.length) {
+        throw new Error(pendingRules.map(rule => `mock not executed: ${rule.method} ${rule.path}`).join('\n'));
+      }
     }
 
     server.calls = [];
