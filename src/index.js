@@ -68,7 +68,15 @@ function rodo(port, hostname, options) {
     return builder;
   };
 
-  server.clean = () => {
+  server.clean = ({ validatePending = false } = {}) => {
+    if (validatePending) {
+      server.rules.forEach((rule) => {
+        if (!server.calls.some(call => call === rule)) {
+          throw new Error(`mock not executed: ${rule.method} ${rule.path}`);
+        }
+      });
+    }
+
     server.calls = [];
     server.rules = [];
   };
