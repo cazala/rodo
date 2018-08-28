@@ -39,8 +39,9 @@ function rodo(port, hostname, options) {
           server.calls.push(rule);
           rule.resolve(req, res);
           rule.calls.push(req);
+          rule.timesCount -= 1;
 
-          if (builderOptions.removeAfterUse) {
+          if (builderOptions.removeAfterUse && rule.timesCount === 0) {
             server.rules.splice(server.rules.indexOf(rule), 1);
           }
 

@@ -104,5 +104,33 @@ describe('server', () => {
             .expect(404);
         });
     });
+
+    it('remove rule after use 2 times', () => {
+      const rule = mock
+        .get('/foo')
+        .times(2)
+        .reply({ bar: 'baz' });
+
+      rule.builder.timesCount.should.eql(2);
+
+      return request(mock)
+        .get('/foo')
+        .expect(200)
+        .expect(() => {
+          mock.rules.length.should.eql(1);
+          rule.builder.timesCount.should.eql(1);
+
+          return request(mock)
+            .get('/foo')
+            .expect(200)
+            .expect(() => {
+              mock.rules.length.should.eql(0);
+
+              return request(mock)
+                .get('/foo')
+                .expect(404);
+            });
+        });
+    });
   });
 });

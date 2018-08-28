@@ -19,12 +19,19 @@ function Builder(path, method, options) {
   this.invokedTwice = false;
   this.invokedThrice = false;
   this.invokedCount = 0;
+  this.timesCount = 1;
 }
 
 Builder.prototype.returns = function returns(response) {
   this.response = response;
 
   return response;
+};
+
+Builder.prototype.times = function times(timesCount) {
+  this.timesCount = timesCount;
+
+  return this;
 };
 
 Builder.prototype.then = function then(callback) {
