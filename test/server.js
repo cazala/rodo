@@ -82,4 +82,27 @@ describe('server', () => {
           }
         }));
   });
+
+  describe('clean after use', () => {
+    let mock;
+
+    beforeEach(() => (mock = rodo(1234, { removeAfterUse: true })));
+
+    afterEach(() => mock.close());
+
+    it('remove rule after use', () => {
+      mock.get('/foo').reply({ bar: 'baz' });
+
+      return request(mock)
+        .get('/foo')
+        .expect(200)
+        .expect(() => {
+          mock.rules.length.should.eql(0);
+
+          return request(mock)
+            .get('/foo')
+            .expect(404);
+        });
+    });
+  });
 });

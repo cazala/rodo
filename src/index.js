@@ -10,10 +10,16 @@ function rodo(port, hostname, options) {
     return instances[port];
   }
 
+  if (typeof options === 'undefined' && typeof hostname === 'object') {
+    // eslint-disable-next-line no-param-reassign
+    options = hostname;
+  }
+
   const middlewares = [];
   const extraOptions = typeof options !== 'undefined' ? options : {};
   const builderOptions = {
-    defaultResponseDelay: extraOptions.defaultResponseDelay
+    defaultResponseDelay: extraOptions.defaultResponseDelay,
+    removeAfterUse: extraOptions.removeAfterUse
   };
 
   const server = http.createServer((req, res) => {
@@ -33,6 +39,10 @@ function rodo(port, hostname, options) {
           server.calls.push(rule);
           rule.resolve(req, res);
           rule.calls.push(req);
+
+          if (builderOptions.removeAfterUse) {
+            server.rules.splice(server.rules.indexOf(rule), 1);
+          }
 
           if (rule.response) {
             rule.response.calls = rule.calls;
