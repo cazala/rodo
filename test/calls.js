@@ -6,21 +6,15 @@ const request = require('supertest');
 describe('calls', () => {
   let mock;
 
-  beforeEach(() => (
-    mock = rodo()
-  ));
+  beforeEach(() => (mock = rodo()));
 
-  afterEach(() => (
-    mock.clean()
-  ));
+  afterEach(() => mock.close());
 
   describe('not called', () => {
     let myCall;
 
     beforeEach(() => {
-      myCall = mock
-        .get('/foo')
-        .reply();
+      myCall = mock.get('/foo').reply();
     });
 
     it('should not be called', () => {
@@ -36,15 +30,10 @@ describe('calls', () => {
     let myCall;
 
     beforeEach(() => {
-      myCall = mock
-        .get('/foo')
-        .reply();
+      myCall = mock.get('/foo').reply();
     });
 
-    beforeEach(() => (
-      request(mock)
-        .get('/foo')
-    ));
+    beforeEach(() => request(mock).get('/foo'));
 
     it('should be called once', () => {
       myCall.invoked.should.eql(true);
@@ -59,17 +48,11 @@ describe('calls', () => {
     let myCall;
 
     beforeEach(() => {
-      myCall = mock
-        .get('/foo')
-        .reply();
+      myCall = mock.get('/foo').reply();
     });
 
-    beforeEach(() => (
-      Promise.all([
-        request(mock).get('/foo'),
-        request(mock).get('/foo'),
-      ])
-    ));
+    beforeEach(() =>
+      Promise.all([request(mock).get('/foo'), request(mock).get('/foo')]));
 
     it('should be called twice', () => {
       myCall.invoked.should.eql(true);
@@ -84,18 +67,15 @@ describe('calls', () => {
     let myCall;
 
     beforeEach(() => {
-      myCall = mock
-        .get('/foo')
-        .reply();
+      myCall = mock.get('/foo').reply();
     });
 
-    beforeEach(() => (
+    beforeEach(() =>
       Promise.all([
         request(mock).get('/foo'),
         request(mock).get('/foo'),
-        request(mock).get('/foo'),
-      ])
-    ));
+        request(mock).get('/foo')
+      ]));
 
     it('should be called twice', () => {
       myCall.invoked.should.eql(true);

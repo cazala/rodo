@@ -11,9 +11,9 @@ function rodo(port, hostname, options) {
   }
 
   const middlewares = [];
-  const extraOptions = (typeof options !== 'undefined') ? options : {};
+  const extraOptions = typeof options !== 'undefined' ? options : {};
   const builderOptions = {
-    defaultResponseDelay: extraOptions.defaultResponseDelay,
+    defaultResponseDelay: extraOptions.defaultResponseDelay
   };
 
   const server = http.createServer((req, res) => {
@@ -25,9 +25,9 @@ function rodo(port, hostname, options) {
       })
       .on('end', () => {
         req.body = Buffer.concat(body).toString();
-        const rule = server.rules.find(a => a.match(req));
+        const rule = server.rules.find((a) => a.match(req));
 
-        middlewares.forEach(m => m(req, res, () => {}));
+        middlewares.forEach((m) => m(req, res, () => {}));
 
         if (rule) {
           server.calls.push(rule);
@@ -40,6 +40,12 @@ function rodo(port, hostname, options) {
             setInvocationsCount(rule);
             return;
           }
+        } else {
+          server.calls.push({
+            noRule: true,
+            method: req.method,
+            path: req.url
+          });
         }
 
         // eslint-disable-next-line no-param-reassign
@@ -70,10 +76,26 @@ function rodo(port, hostname, options) {
 
   server.clean = ({ validatePending = false } = {}) => {
     if (validatePending) {
-      const pendingRules = server.rules.filter(rule => !server.calls.some(call => call === rule));
+      const pendingRules = server.rules.filter(
+        (rule) => !server.calls.some((call) => call === rule)
+      );
 
       if (pendingRules.length) {
-        throw new Error(pendingRules.map(rule => `mock not executed: ${rule.method} ${rule.path}`).join('\n'));
+        throw new Error(
+          pendingRules
+            .map((rule) => `mock not executed: ${rule.method} ${rule.path}`)
+            .join('\n')
+        );
+      }
+
+      const noRuleCalls = server.calls.filter((call) => call.noRule);
+
+      if (noRuleCalls.length) {
+        throw new Error(
+          noRuleCalls
+            .map((call) => `no mock for call: ${call.method} ${call.path}`)
+            .join('\n')
+        );
       }
     }
 

@@ -11,7 +11,7 @@ function Response(builder, body, options) {
   this.invokedThrice = false;
   this.invokedCount = 0;
   this.status = 200;
-  this.options = (typeof options !== 'undefined') ? options : {};
+  this.options = typeof options !== 'undefined' ? options : {};
   this.delay = this.options.defaultDelay || 0;
 
   if (body) {
@@ -60,8 +60,9 @@ function answer(body, req) {
 Response.prototype.send = function send(req, res) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      Object.keys(this.headers)
-        .forEach(key => res.setHeader(key, this.headers[key]));
+      Object.keys(this.headers).forEach((key) =>
+        res.setHeader(key, this.headers[key])
+      );
 
       // eslint-disable-next-line no-param-reassign
       res.statusCode = this.status;
@@ -76,7 +77,11 @@ Response.prototype.send = function send(req, res) {
         resolve(body);
       });
 
-      if (this.builder && this.builder.callback && !this.builder.callbackCalled) {
+      if (
+        this.builder &&
+        this.builder.callback &&
+        !this.builder.callbackCalled
+      ) {
         this.builder.callbackCalled = true;
         this.builder.callback(req);
         this.builder.promiseResolveFn(req);

@@ -10,9 +10,9 @@ function Builder(path, method, options) {
   this.headers = {};
   this.query = {};
   this.calls = [];
-  this.options = (typeof options !== 'undefined') ? options : {};
+  this.options = typeof options !== 'undefined' ? options : {};
   this.responseOptions = {
-    defaultDelay: this.options.defaultResponseDelay,
+    defaultDelay: this.options.defaultResponseDelay
   };
   this.invoked = false;
   this.invokedOnce = false;
@@ -67,7 +67,10 @@ Builder.prototype.havingHeader = function havingHeader(name, value) {
 };
 
 Builder.prototype.havingBody = function havingBody(body) {
-  this.body = typeof body === 'string' || typeof body === 'function' ? body : JSON.stringify(body);
+  this.body =
+    typeof body === 'string' || typeof body === 'function'
+      ? body
+      : JSON.stringify(body);
 
   return this;
 };
@@ -91,12 +94,16 @@ Builder.prototype.match = function match(req) {
   const isMatch = [
     this.path === urlObject.pathname,
     this.method === req.method,
-    (typeof this.body === 'function' ?
-      this.body(req.body) :
-      !this.body || this.body === req.body),
-    Object.keys(this.headers).every(key => req.headers[key] === this.headers[key]),
-    Object.keys(this.query).every(key => getKey(query[key]) === getKey(this.query[key])),
-  ].every(rule => rule);
+    typeof this.body === 'function'
+      ? this.body(req.body)
+      : !this.body || this.body === req.body,
+    Object.keys(this.headers).every(
+      (key) => req.headers[key] === this.headers[key]
+    ),
+    Object.keys(this.query).every(
+      (key) => getKey(query[key]) === getKey(this.query[key])
+    )
+  ].every((rule) => rule);
 
   return isMatch;
 

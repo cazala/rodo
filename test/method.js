@@ -6,50 +6,40 @@ const request = require('supertest');
 describe('method', () => {
   let mock;
 
-  beforeEach(() => (
-    mock = rodo()
-  ));
+  beforeEach(() => (mock = rodo()));
 
-  afterEach(() => (
-    mock.clean()
-  ));
+  afterEach(() => mock.close());
 
   describe('with a method', () => {
     let myCall;
 
     beforeEach(() => {
-      myCall = mock
-        .patch('/foo')
-        .reply();
+      myCall = mock.patch('/foo').reply();
     });
 
-    it('should get the call', () => (
+    it('should get the call', () =>
       request(mock)
         .patch('/foo')
         .expect(200)
         .expect(() => {
           myCall.calls.length.should.eql(1);
-        })
-    ));
+        }));
   });
 
   describe('filtering by method', () => {
     let myCall;
 
     beforeEach(() => {
-      myCall = mock
-        .patch('/foo')
-        .reply();
+      myCall = mock.patch('/foo').reply();
     });
 
-    it('should not get the call', () => (
+    it('should not get the call', () =>
       request(mock)
         .post('/foo')
         .expect(404)
         .expect(() => {
           myCall.calls.length.should.eql(0);
-        })
-    ));
+        }));
   });
 });
 
@@ -57,18 +47,14 @@ describe('method when server is instantiated with a default delay', () => {
   const testDelay = 1000;
   let mock;
 
-  before(() => {
+  beforeEach(() => {
     mock = rodo(undefined, undefined, { defaultResponseDelay: testDelay });
   });
 
-  after(() => (
-    mock.clean()
-  ));
+  afterEach(() => mock.clean());
 
   it('should have the expected delay value', () => {
-    const myCall = mock
-      .patch('/foo')
-      .reply();
+    const myCall = mock.patch('/foo').reply();
 
     myCall.delay.should.equal(testDelay);
   });

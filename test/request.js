@@ -6,13 +6,9 @@ const request = require('supertest');
 describe('request', () => {
   let mock;
 
-  beforeEach(() => (
-    mock = rodo()
-  ));
+  beforeEach(() => (mock = rodo()));
 
-  afterEach(() => (
-    mock.clean()
-  ));
+  afterEach(() => mock.close());
 
   describe('with havingMethod and havingPath ', () => {
     let jsonCall;
@@ -27,15 +23,14 @@ describe('request', () => {
         .withHeader('content-type', 'application/json');
     });
 
-    it('should reply a json', () => (
+    it('should reply a json', () =>
       request(mock)
         .get('/foo')
         .expect(200)
         .expect((res) => {
           res.body.bar.should.eql('baz');
           jsonCall.calls.length.should.eql(1);
-        })
-    ));
+        }));
   });
 
   describe('when no reply is configured ', () => {
@@ -48,14 +43,13 @@ describe('request', () => {
         .havingPath('/foo');
     });
 
-    it('should reply a json', () => (
+    it('should reply a json', () =>
       request(mock)
         .get('/foo')
         .expect(404)
         .expect(() => {
           myCall.calls.length.should.eql(1);
-        })
-    ));
+        }));
   });
 
   describe('promises', () => {
@@ -64,11 +58,11 @@ describe('request', () => {
     beforeEach(() => {
       myCall = mock
         .request()
-          .havingMethod('GET')
-          .havingPath('/foo')
+        .havingMethod('GET')
+        .havingPath('/foo')
         .reply()
-          .withBody({ bar: 'baz' })
-          .withHeader('content-type', 'application/json');
+        .withBody({ bar: 'baz' })
+        .withHeader('content-type', 'application/json');
     });
 
     it('should resolve the promise once', (done) => {
@@ -93,13 +87,11 @@ describe('request when server is instantiated with a default delay', () => {
   const testDelay = 1000;
   let mock;
 
-  before(() => {
+  beforeEach(() => {
     mock = rodo(undefined, undefined, { defaultResponseDelay: testDelay });
   });
 
-  after(() => (
-    mock.clean()
-  ));
+  afterEach(() => mock.clean());
 
   it('should have the expected delay value', () => {
     const jsonCall = mock
@@ -123,4 +115,3 @@ describe('request when server is instantiated with a default delay', () => {
     jsonCall.delay.should.equal(newDelay);
   });
 });
-

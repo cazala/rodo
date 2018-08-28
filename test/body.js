@@ -6,13 +6,9 @@ const request = require('supertest');
 describe('body', () => {
   let mock;
 
-  beforeEach(() => (
-    mock = rodo()
-  ));
+  beforeEach(() => (mock = rodo()));
 
-  afterEach(() => (
-    mock.clean()
-  ));
+  afterEach(() => mock.close());
 
   describe('filtering by body', () => {
     let myCall;
@@ -22,29 +18,27 @@ describe('body', () => {
         .post('/foo')
         .havingBody({ foo: 'bar' })
         .reply({
-          baz: 'quux',
+          baz: 'quux'
         });
     });
 
-    it('should receive the call', () => (
+    it('should receive the call', () =>
       request(mock)
         .post('/foo')
         .send({ foo: 'bar' })
         .expect(200)
         .expect(() => {
           myCall.calls.length.should.eql(1);
-        })
-    ));
+        }));
 
-    it('should not receive the call', () => (
+    it('should not receive the call', () =>
       request(mock)
         .post('/foo')
         .send({ duck: 'pet' })
         .expect(404)
         .expect(() => {
           myCall.calls.length.should.eql(0);
-        })
-    ));
+        }));
   });
 
   describe('using a func', () => {
@@ -53,30 +47,28 @@ describe('body', () => {
     beforeEach(() => {
       myCall = mock
         .post('/foo')
-        .havingBody(body => JSON.parse(body).foo === 'bar')
+        .havingBody((body) => JSON.parse(body).foo === 'bar')
         .reply({
-          baz: 'quux',
+          baz: 'quux'
         });
     });
 
-    it('should receive the call', () => (
+    it('should receive the call', () =>
       request(mock)
         .post('/foo')
         .send({ foo: 'bar' })
         .expect(200)
         .expect(() => {
           myCall.calls.length.should.eql(1);
-        })
-    ));
+        }));
 
-    it('should not receive the call', () => (
+    it('should not receive the call', () =>
       request(mock)
         .post('/foo')
         .send({ duck: 'pet' })
         .expect(404)
         .expect(() => {
           myCall.calls.length.should.eql(0);
-        })
-    ));
+        }));
   });
 });

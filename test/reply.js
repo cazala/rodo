@@ -7,13 +7,9 @@ const request = require('supertest');
 describe('reply', () => {
   let mock;
 
-  beforeEach(() => (
-    mock = rodo()
-  ));
+  beforeEach(() => (mock = rodo()));
 
-  afterEach(() => (
-    mock.clean()
-  ));
+  afterEach(() => mock.close());
 
   describe('with a json', () => {
     let jsonCall;
@@ -25,15 +21,14 @@ describe('reply', () => {
         .withHeader('content-type', 'application/json');
     });
 
-    it('should reply a json', () => (
+    it('should reply a json', () =>
       request(mock)
         .get('/foo')
         .expect(200)
         .expect((res) => {
           res.body.bar.should.eql('baz');
           jsonCall.calls.length.should.eql(1);
-        })
-    ));
+        }));
   });
 
   describe('using withBody', () => {
@@ -47,35 +42,31 @@ describe('reply', () => {
         .withHeader('content-type', 'application/json');
     });
 
-    it('should reply a json', () => (
+    it('should reply a json', () =>
       request(mock)
         .get('/foo')
         .expect(200)
         .expect((res) => {
           res.body.bar.should.eql('baz');
           jsonCall.calls.length.should.eql(1);
-        })
-    ));
+        }));
   });
 
   describe('with a string', () => {
     let stringCall;
 
     beforeEach(() => {
-      stringCall = mock
-        .get('/foo')
-        .reply('bar');
+      stringCall = mock.get('/foo').reply('bar');
     });
 
-    it('should reply a string', () => (
+    it('should reply a string', () =>
       request(mock)
         .get('/foo')
         .expect(200)
         .expect((res) => {
           res.text.should.eql('bar');
           stringCall.calls.length.should.eql(1);
-        })
-    ));
+        }));
   });
 
   describe('with a function', () => {
@@ -84,40 +75,34 @@ describe('reply', () => {
 
     beforeEach(() => {
       getBody = () => 'bar';
-      functionCall = mock
-        .get('/foo')
-        .reply(getBody);
+      functionCall = mock.get('/foo').reply(getBody);
     });
 
-    it('should reply with function response', () => (
+    it('should reply with function response', () =>
       request(mock)
         .get('/foo')
         .expect(200)
         .expect((res) => {
           res.text.should.eql('bar');
           functionCall.calls.length.should.eql(1);
-        })
-    ));
+        }));
   });
 
   describe('with a custom response', () => {
     let functionCall;
 
     beforeEach(() => {
-      functionCall = mock
-        .get('/foo')
-        .returns(new Response(null, 'bar'));
+      functionCall = mock.get('/foo').returns(new Response(null, 'bar'));
     });
 
-    it('should reply with body', () => (
+    it('should reply with body', () =>
       request(mock)
         .get('/foo')
         .expect(200)
         .expect((res) => {
           res.text.should.eql('bar');
           functionCall.calls.length.should.eql(1);
-        })
-    ));
+        }));
   });
 
   describe('with a custom response with status', () => {
@@ -129,22 +114,20 @@ describe('reply', () => {
         .returns(new Response(null, 'bar').withStatus(228));
     });
 
-    it('should reply with body and right status', () => (
+    it('should reply with body and right status', () =>
       request(mock)
         .get('/foo')
         .expect(228)
         .expect((res) => {
           res.text.should.eql('bar');
           functionCall.calls.length.should.eql(1);
-        })
-    ));
+        }));
   });
 
   describe('when no rule assigned', () => {
-    it('should reply with a 404', () => (
+    it('should reply with a 404', () =>
       request(mock)
         .get('/foo')
-        .expect(404)
-    ));
+        .expect(404));
   });
 });
