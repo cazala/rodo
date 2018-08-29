@@ -68,6 +68,7 @@ describe('server', () => {
         mock.clean({ validatePending: true });
       } catch (err) {
         err.message.should.eql('mock not executed: GET /foo');
+        mock.rules.length.should.eql(0);
       }
     });
 

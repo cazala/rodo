@@ -86,13 +86,15 @@ function rodo(port, hostname, options) {
   };
 
   server.clean = ({ validatePending = false } = {}) => {
+    let error;
+
     if (validatePending) {
       const pendingRules = server.rules.filter(
         (rule) => !server.calls.some((call) => call === rule)
       );
 
       if (pendingRules.length) {
-        throw new Error(
+        error = new Error(
           pendingRules
             .map((rule) => `mock not executed: ${rule.method} ${rule.path}`)
             .join('\n')
@@ -101,8 +103,8 @@ function rodo(port, hostname, options) {
 
       const noRuleCalls = server.calls.filter((call) => call.noRule);
 
-      if (noRuleCalls.length) {
-        throw new Error(
+      if (noRuleCalls.length && !error) {
+        error = new Error(
           noRuleCalls
             .map((call) => `no mock for call: ${call.method} ${call.path}`)
             .join('\n')
@@ -112,6 +114,10 @@ function rodo(port, hostname, options) {
 
     server.calls = [];
     server.rules = [];
+
+    if (error) {
+      throw error;
+    }
   };
 
   server.on('close', () => {
