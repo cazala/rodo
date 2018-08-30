@@ -67,7 +67,9 @@ describe('server', () => {
       try {
         mock.clean({ validatePending: true });
       } catch (err) {
-        err.message.should.eql('mock not executed: GET /foo');
+        err.message.should.eql(
+          'The following errors have been found:\n  mock not executed: GET /foo'
+        );
         mock.rules.length.should.eql(0);
       }
     });
@@ -79,7 +81,9 @@ describe('server', () => {
           try {
             mock.clean({ validatePending: true });
           } catch (err) {
-            err.message.should.eql('no mock for call: GET /foo');
+            err.message.should.eql(
+              'The following errors have been found:\n  no mock for call: GET /foo'
+            );
           }
         }));
   });
