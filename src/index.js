@@ -1,11 +1,15 @@
 'use strict';
 
-const Builder = require('./builder');
+const debug = require('debug');
 const http = require('http');
+const Builder = require('./builder');
 
 const instances = {};
 
 function rodo(port, hostname, options) {
+  const log = debug(`rodo${port ? `:${port}` : ''}`);
+  const logError = debug(`rodo${port ? `:${port}` : ''}:error`);
+
   if (port && instances[port]) {
     return instances[port];
   }
@@ -25,6 +29,9 @@ function rodo(port, hostname, options) {
   const server = http.createServer((req, res) => {
     const body = [];
 
+    log(`received ${req.method} ${req.url}`);
+    log('  headers', req.headers);
+
     req
       .on('data', (chunk) => {
         body.push(chunk);
@@ -36,6 +43,11 @@ function rodo(port, hostname, options) {
         middlewares.forEach((m) => m(req, res, () => {}));
 
         if (rule) {
+          log(`resolving ${req.method} ${req.url} with rule:`);
+          log(`  ${rule.method} ${rule.path}`);
+          log(`  query`, rule.query);
+          log(`  headers`, rule.headers);
+
           server.calls.push(rule);
           rule.resolve(req, res);
           rule.calls.push(req);
@@ -71,6 +83,8 @@ function rodo(port, hostname, options) {
 
   ['get', 'post', 'put', 'delete', 'patch'].forEach((method) => {
     server[method] = (path) => {
+      log(`registering ${method} ${path}`);
+
       const builder = new Builder(path, method.toUpperCase(), builderOptions);
       server.rules.push(builder);
 
@@ -86,6 +100,8 @@ function rodo(port, hostname, options) {
   };
 
   server.clean = ({ validatePending = false } = {}) => {
+    log(`cleaning rules`);
+
     let errors = [];
 
     if (validatePending) {
@@ -116,6 +132,8 @@ function rodo(port, hostname, options) {
     server.rules = [];
 
     if (errors.length) {
+      logError(errors);
+
       throw new Error(
         `The following errors have been found:\n${errors
           .map((error) => `  ${error}`)

@@ -41,5 +41,8 @@
   "bugs": {
     "url": "https://github.com/nescalante/rodo/issues"
   },
-  "homepage": "https://github.com/nescalante/rodo#readme"
+  "homepage": "https://github.com/nescalante/rodo#readme",
+  "dependencies": {
+    "debug": "^3.2.6"
+  }
 }
