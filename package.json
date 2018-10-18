@@ -1,6 +1,6 @@
 {
   "name": "rodo",
-  "version": "2.9.2",
+  "version": "2.9.3",
   "description": "Http mocking service",
   "main": "src/index.js",
   "scripts": {
