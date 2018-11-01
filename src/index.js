@@ -48,6 +48,14 @@ function rodo(port, hostname, options) {
           log(`  query`, rule.query);
           log(`  headers`, rule.headers);
 
+          if (
+            rule.response &&
+            rule.response.body &&
+            rule.response.body.length
+          ) {
+            log(`  content`, rule.response.body.length);
+          }
+
           server.calls.push(rule);
           rule.resolve(req, res);
           rule.calls.push(req);
