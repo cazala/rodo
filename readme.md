@@ -122,11 +122,10 @@ to overwrite the default.
 
 #### `rodo(port?, hostname?, options?)`
 
-`port`: The port number of the server to be used by Rodo
-`hostname`: Hostname of the server, if needed
-`options`: Options for the server, options is an object with props, i.e.: `{ removeAfterUse: true }`
-
-- `removeAfterUse`: Remove call mocks after they are called
+- `port`: The port number of the server to be used by Rodo
+- `hostname`: Hostname of the server, if needed
+- `options`: Options for the server, options is an object with props, i.e.: `{ removeAfterUse: true }`
+  - `removeAfterUse`: Remove call mocks after they are called
 
 ### Request methods
 
