@@ -28,13 +28,13 @@ const myCall = mockServer
   .reply({ bar: 'baz' })
   .withHeader('content-type', 'application/json');
 
-// Assertions  
-fetch('http://localhost:8000/foo')
-  .then((res) => res.json())
-  .then((res) => {
-    assert.equal(res.bar, 'baz');
-    assert.equal(myCall.calls.length, 1);
-  });
+// Action
+const res = await fetch('http://localhost:8000/foo');
+const json = await res.json();
+
+// Assertions
+assert.equal(json.bar, 'baz');
+assert.equal(myCall.calls.length, 1);
 ```
 
 ## Getting started
@@ -51,7 +51,8 @@ const mockServer = rodo(8000);
 Lets start building the filtering process for a specific request:
 
 ```js
-var myRequest = mockServer.request()
+var myRequest = mockServer
+  .request()
   .havingMethod('GET')
   .havingPath('/foo');
 ```
@@ -69,7 +70,8 @@ Nice! Now **Rodo** will intercept every request to `GET http://localhost:8000/fo
 Now you want **Rodo** to return a specific response to that request:
 
 ```js
-var myResponse = myRequest.reply()
+var myResponse = myRequest
+  .reply()
   .withHeader('content-type', 'application/json')
   .withStatus(200)
   .withBody({ bar: 'baz' });
@@ -78,7 +80,8 @@ var myResponse = myRequest.reply()
 You can do the same with:
 
 ```js
-var myResponse = myRequest.reply({ bar: 'baz '})
+var myResponse = myRequest
+  .reply({ bar: 'baz ' })
   .withHeader('content-type', 'application/json');
 ```
 
@@ -122,7 +125,8 @@ to overwrite the default.
 `port`: The port number of the server to be used by Rodo
 `hostname`: Hostname of the server, if needed
 `options`: Options for the server, options is an object with props, i.e.: `{ removeAfterUse: true }`
-  - `removeAfterUse`: Remove call mocks after they are called
+
+- `removeAfterUse`: Remove call mocks after they are called
 
 ### Request methods
 
