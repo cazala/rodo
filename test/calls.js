@@ -52,7 +52,8 @@ describe('calls', () => {
     });
 
     beforeEach(() =>
-      Promise.all([request(mock).get('/foo'), request(mock).get('/foo')]));
+      Promise.all([request(mock).get('/foo'), request(mock).get('/foo')])
+    );
 
     it('should be called twice', () => {
       myCall.invoked.should.eql(true);
@@ -75,7 +76,8 @@ describe('calls', () => {
         request(mock).get('/foo'),
         request(mock).get('/foo'),
         request(mock).get('/foo')
-      ]));
+      ])
+    );
 
     it('should be called twice', () => {
       myCall.invoked.should.eql(true);
