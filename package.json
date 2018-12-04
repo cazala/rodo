@@ -12,15 +12,7 @@
     "lint:fix": "eslint src test --fix",
     "postversion": "git push && git push --tags && npm publish"
   },
-  "keywords": [
-    "rodo",
-    "http",
-    "assert",
-    "mock",
-    "mocking",
-    "service",
-    "api"
-  ],
+  "keywords": ["rodo", "http", "assert", "mock", "mocking", "service", "api"],
   "author": "Nicolas Escalante <nlante@gmail.com>",
   "license": "MIT",
   "devDependencies": {
