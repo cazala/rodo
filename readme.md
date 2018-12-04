@@ -1,4 +1,4 @@
-# Rodo [![Greenkeeper badge](https://badges.greenkeeper.io/nescalante/rodo.svg)](https://greenkeeper.io/)
+# Rodo
 
 ![Rodo](http://i.ebayimg.com/images/g/PFEAAOSwmrlUsqos/s-l300.jpg)
 
@@ -114,6 +114,15 @@ will be automatically applied to all of them. And if you have a case that needs 
 to overwrite the default.
 
 ## API
+
+### Constructor
+
+#### `rodo(port?, hostname?, options?)`
+
+`port`: The port number of the server to be used by Rodo
+`hostname`: Hostname of the server, if needed
+`options`: Options for the server, options is an object with props, i.e.: `{ removeAfterUse: true }`
+  - `removeAfterUse`: Remove call mocks after they are called
 
 ### Request methods
 
