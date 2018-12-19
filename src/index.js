@@ -2,6 +2,8 @@
 
 const debug = require('debug');
 const http = require('http');
+const multiparty = require('multiparty');
+const typeis = require('type-is');
 const Builder = require('./builder');
 
 const instances = {};
@@ -26,63 +28,91 @@ function rodo(port, hostname, options) {
     removeAfterUse: extraOptions.removeAfterUse
   };
 
-  const server = http.createServer((req, res) => {
-    const body = [];
+  const parseBody = (req) =>
+    new Promise((resolve, reject) => {
+      const body = [];
 
+      req
+        .on('data', (chunk) => {
+          body.push(chunk);
+        })
+        .on('end', () => {
+          resolve(Buffer.concat(body).toString());
+        })
+        .on('error', (error) => {
+          reject(error);
+        });
+    });
+  const parseMultipart = (req) =>
+    new Promise((resolve, reject) => {
+      const form = new multiparty.Form();
+
+      form.parse(req, (error, fields, files) => {
+        log('  fields', fields);
+        log('  files', files);
+        if (error) {
+          reject(error);
+          return;
+        }
+
+        resolve({ fields, files });
+      });
+    });
+  const server = http.createServer(async (req, res) => {
     log(`received ${req.method} ${req.url}`);
     log('  headers', req.headers);
 
-    req
-      .on('data', (chunk) => {
-        body.push(chunk);
-      })
-      .on('end', () => {
-        req.body = Buffer.concat(body).toString();
-        const rule = server.rules.find((a) => a.match(req));
+    if (typeis(req, ['multipart'])) {
+      log('parsing multipart');
+      const { files, fields } = await parseMultipart(req);
 
-        middlewares.forEach((m) => m(req, res, () => {}));
+      req.files = files;
+      req.fields = fields;
+    } else {
+      log('parsing plain body');
+      req.body = await parseBody(req);
+    }
 
-        if (rule) {
-          log(`resolving ${req.method} ${req.url} with rule:`);
-          log(`  ${rule.method} ${rule.path}`);
-          log(`  query`, rule.query);
-          log(`  headers`, rule.headers);
+    const rule = server.rules.find((a) => a.match(req));
 
-          if (
-            rule.response &&
-            rule.response.body &&
-            rule.response.body.length
-          ) {
-            log(`  content`, rule.response.body.length);
-          }
+    middlewares.forEach((m) => m(req, res, () => {}));
 
-          server.calls.push(rule);
-          rule.resolve(req, res);
-          rule.calls.push(req);
-          rule.timesCount -= 1;
+    if (rule) {
+      log(`resolving ${req.method} ${req.url} with rule:`);
+      log(`  ${rule.method} ${rule.path}`);
+      log(`  query`, rule.query);
+      log(`  headers`, rule.headers);
 
-          if (builderOptions.removeAfterUse && rule.timesCount === 0) {
-            server.rules.splice(server.rules.indexOf(rule), 1);
-          }
+      if (rule.response && rule.response.body && rule.response.body.length) {
+        log(`  content`, rule.response.body.length);
+      }
 
-          if (rule.response) {
-            rule.response.calls = rule.calls;
-            setInvocationsCount(rule.response);
-            setInvocationsCount(rule);
-            return;
-          }
-        } else {
-          server.calls.push({
-            noRule: true,
-            method: req.method,
-            path: req.url
-          });
-        }
+      server.calls.push(rule);
+      rule.resolve(req, res);
+      rule.calls.push(req);
+      rule.timesCount -= 1;
 
-        // eslint-disable-next-line no-param-reassign
-        res.statusCode = 404;
-        res.end();
+      if (builderOptions.removeAfterUse && rule.timesCount === 0) {
+        server.rules.splice(server.rules.indexOf(rule), 1);
+      }
+
+      if (rule.response) {
+        rule.response.calls = rule.calls;
+        setInvocationsCount(rule.response);
+        setInvocationsCount(rule);
+        return;
+      }
+    } else {
+      server.calls.push({
+        noRule: true,
+        method: req.method,
+        path: req.url
       });
+    }
+
+    // eslint-disable-next-line no-param-reassign
+    res.statusCode = 404;
+    res.end();
   });
 
   server.use = function use(middleware) {

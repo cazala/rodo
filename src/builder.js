@@ -8,6 +8,8 @@ function Builder(path, method, options) {
   this.path = path;
   this.method = method || 'GET';
   this.headers = {};
+  this.fields = {};
+  this.files = () => true;
   this.query = {};
   this.calls = [];
   this.options = typeof options !== 'undefined' ? options : {};
@@ -82,6 +84,25 @@ Builder.prototype.havingBody = function havingBody(body) {
   return this;
 };
 
+Builder.prototype.havingFields = function havingFields(fields) {
+  this.fields = Object.keys(fields).reduce((acum, current) => {
+    // eslint-disable-next-line no-param-reassign
+    acum[current] = Array.isArray(fields[current])
+      ? fields[current]
+      : [fields[current]];
+
+    return acum;
+  }, {});
+
+  return this;
+};
+
+Builder.prototype.havingFiles = function havingFiles(files) {
+  this.files = files;
+
+  return this;
+};
+
 Builder.prototype.havingQuery = function havingQuery(query) {
   this.query = query;
 
@@ -104,6 +125,22 @@ Builder.prototype.match = function match(req) {
     typeof this.body === 'function'
       ? this.body(req.body)
       : !this.body || this.body === req.body,
+    Object.keys(this.fields).every((field) =>
+      this.fields[field].every(
+        (fieldValue) =>
+          req.fields &&
+          req.fields[field].some(
+            (reqFieldValue) => reqFieldValue === fieldValue
+          )
+      )
+    ),
+    Object.keys(this.files).every(
+      (file) =>
+        req.files &&
+        req.files[file][0] &&
+        this.files[file] &&
+        this.files[file](req.files && req.files[file][0])
+    ),
     Object.keys(this.headers).every(
       (key) => req.headers[key] === this.headers[key]
     ),

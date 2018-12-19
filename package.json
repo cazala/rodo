@@ -12,7 +12,15 @@
     "lint:fix": "eslint src test --fix",
     "postversion": "git push && git push --tags && npm publish"
   },
-  "keywords": ["rodo", "http", "assert", "mock", "mocking", "service", "api"],
+  "keywords": [
+    "rodo",
+    "http",
+    "assert",
+    "mock",
+    "mocking",
+    "service",
+    "api"
+  ],
   "author": "Nicolas Escalante <nlante@gmail.com>",
   "license": "MIT",
   "devDependencies": {
@@ -35,6 +43,8 @@
   },
   "homepage": "https://github.com/nescalante/rodo#readme",
   "dependencies": {
-    "debug": "^3.2.6"
+    "debug": "^3.2.6",
+    "multiparty": "^4.2.1",
+    "type-is": "^1.6.16"
   }
 }

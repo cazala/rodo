@@ -110,6 +110,20 @@ mockServer.close();
 Aside from port and hostname, when instatiating the **Rodo** server you can optionally pass an object with any of these
 extra options:
 
+## Using multipart
+
+Multipart will be handled using the [multiparty](https://www.npmjs.com/package/multiparty) library. An example for rodo handling multipart is:
+
+```js
+mock
+  .post('/foo')
+  .havingFields({ bar: 'baz' })
+  .havingFiles({
+    quux: (file) => file.originalFilename === 'my-file.txt'
+  })
+  .reply('quux');
+```
+
 #### defaultResponseDelay
 
 Instead of using `.withDelay` explicitly on each of your response methods, you can use this option to set a default delay that
@@ -138,6 +152,14 @@ Specifies the HTTP method, should be one of GET, POST, PUT, DELETE, PATCH.
 #### `.havingBody(body)`
 
 Specifies the body, can be an object or a string.
+
+#### `.havingFields(fields)`
+
+Specifies the fields, should be a key-value object.
+
+#### `.havingFiles(files)`
+
+Specifies the files, should be a key-value object, where value should be a function that validates every file configured.
 
 #### `.havingPath(path)`
 
