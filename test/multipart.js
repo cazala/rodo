@@ -16,7 +16,8 @@ describe('multipart', () => {
       .post('/foo')
       .havingFields({ bar: 'baz' })
       .havingFiles({
-        quux: (file) => file.originalFilename === 'sample.txt'
+        quux: (file) => file.originalFilename === 'sample.txt',
+        qux: 'sample.txt'
       })
       .reply({
         baz: 'quux'
@@ -29,6 +30,7 @@ describe('multipart', () => {
       .post('/foo')
       .field('bar', 'baz')
       .attach('quux', 'test/resources/sample.txt')
+      .attach('qux', 'test/resources/sample.txt')
       .expect(200)
       .expect((res) => {
         res.body.baz.should.eql('quux');

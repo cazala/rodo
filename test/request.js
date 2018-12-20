@@ -16,7 +16,7 @@ describe('request', () => {
     beforeEach(() => {
       jsonCall = mock
         .request()
-        .havingMethod('GET')
+        .havingMethod('get')
         .havingPath('/foo')
         .reply()
         .withBody({ bar: 'baz' })
@@ -39,7 +39,7 @@ describe('request', () => {
     beforeEach(() => {
       myCall = mock
         .request()
-        .havingMethod('GET')
+        .havingMethod('get')
         .havingPath('/foo');
     });
 
@@ -58,7 +58,7 @@ describe('request', () => {
     beforeEach(() => {
       myCall = mock
         .request()
-        .havingMethod('GET')
+        .havingMethod('get')
         .havingPath('/foo')
         .reply()
         .withBody({ bar: 'baz' })
@@ -96,7 +96,7 @@ describe('request when server is instantiated with a default delay', () => {
   it('should have the expected delay value', () => {
     const jsonCall = mock
       .request()
-      .havingMethod('GET')
+      .havingMethod('get')
       .havingPath('/foo')
       .reply();
 
@@ -107,7 +107,7 @@ describe('request when server is instantiated with a default delay', () => {
     const newDelay = 2000;
     const jsonCall = mock
       .request()
-      .havingMethod('GET')
+      .havingMethod('get')
       .havingPath('/foo')
       .reply()
       .withDelay(newDelay);

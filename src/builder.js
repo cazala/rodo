@@ -58,7 +58,7 @@ Builder.prototype.returns = function returns(response) {
 };
 
 Builder.prototype.havingMethod = function havingMethod(method) {
-  this.method = method;
+  this.method = method.toUpperCase();
 
   return this;
 };
@@ -122,42 +122,73 @@ Builder.prototype.match = function match(req) {
   const isMatch = [
     this.path === urlObject.pathname,
     this.method === req.method,
-    typeof this.body === 'function'
-      ? this.body(req.body)
-      : !this.body || this.body === req.body,
-    Object.keys(this.fields).every((field) =>
-      this.fields[field].every(
-        (fieldValue) =>
-          req.fields &&
-          req.fields[field].some(
-            (reqFieldValue) => reqFieldValue === fieldValue
-          )
-      )
-    ),
-    Object.keys(this.files).every(
-      (file) =>
-        req.files &&
-        req.files[file][0] &&
-        this.files[file] &&
-        this.files[file](req.files && req.files[file][0])
-    ),
-    Object.keys(this.headers).every(
-      (key) => req.headers[key] === this.headers[key]
-    ),
+    compareBody(this.body, req.body),
+    compareFields(this.fields, req.fields),
+    compareFiles(this.files, req.files),
+    compareHeaders(this.headers, req.headers),
     Object.keys(this.query).every(
       (key) => getKey(query[key]) === getKey(this.query[key])
     )
   ].every((rule) => rule);
 
   return isMatch;
-
-  function getKey(key) {
-    if (key === undefined || key === null) {
-      return key;
-    }
-
-    return key.toString();
-  }
 };
 
 module.exports = Builder;
+
+function getKey(key) {
+  if (key === undefined || key === null) {
+    return key;
+  }
+
+  return key.toString();
+}
+
+function compareFields(builderFields, requestFields) {
+  return Object.keys(builderFields).every((field) =>
+    builderFields[field].every(
+      (fieldValue) =>
+        requestFields &&
+        requestFields[field].some(
+          (reqFieldValue) => reqFieldValue === fieldValue
+        )
+    )
+  );
+}
+
+function compareFiles(builderFiles, requestFiles) {
+  return Object.keys(builderFiles).every((file) => {
+    if (
+      requestFiles &&
+      requestFiles[file] &&
+      requestFiles[file][0] &&
+      builderFiles[file]
+    ) {
+      if (typeof builderFiles[file] === 'function') {
+        return builderFiles[file](requestFiles[file][0]);
+      }
+
+      return requestFiles[file][0].originalFilename === builderFiles[file];
+    }
+
+    return false;
+  });
+}
+
+function compareBody(builderBody, requestBody) {
+  if (!builderBody) {
+    return true;
+  }
+
+  if (typeof builderBody === 'function') {
+    return builderBody(requestBody);
+  }
+
+  return builderBody === requestBody;
+}
+
+function compareHeaders(builderHeaders, requestHeaders) {
+  return Object.keys(builderHeaders).every(
+    (key) => requestHeaders[key] === builderHeaders[key]
+  );
+}

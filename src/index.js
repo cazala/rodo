@@ -2,9 +2,9 @@
 
 const debug = require('debug');
 const http = require('http');
-const multiparty = require('multiparty');
 const typeis = require('type-is');
 const Builder = require('./builder');
+const { parseBody, parseMultipart } = require('./utils');
 
 const instances = {};
 
@@ -28,49 +28,22 @@ function rodo(port, hostname, options) {
     removeAfterUse: extraOptions.removeAfterUse
   };
 
-  const parseBody = (req) =>
-    new Promise((resolve, reject) => {
-      const body = [];
-
-      req
-        .on('data', (chunk) => {
-          body.push(chunk);
-        })
-        .on('end', () => {
-          resolve(Buffer.concat(body).toString());
-        })
-        .on('error', (error) => {
-          reject(error);
-        });
-    });
-  const parseMultipart = (req) =>
-    new Promise((resolve, reject) => {
-      const form = new multiparty.Form();
-
-      form.parse(req, (error, fields, files) => {
-        log('  fields', fields);
-        log('  files', files);
-        if (error) {
-          reject(error);
-          return;
-        }
-
-        resolve({ fields, files });
-      });
-    });
   const server = http.createServer(async (req, res) => {
     log(`received ${req.method} ${req.url}`);
     log('  headers', req.headers);
 
     if (typeis(req, ['multipart'])) {
       log('parsing multipart');
-      const { files, fields } = await parseMultipart(req);
+      const { files, fields } = await parseMultipart(req, port);
+
+      log('  fields', fields);
+      log('  files', files);
 
       req.files = files;
       req.fields = fields;
     } else {
       log('parsing plain body');
-      req.body = await parseBody(req);
+      req.body = await parseBody(req, port);
     }
 
     const rule = server.rules.find((a) => a.match(req));
@@ -103,6 +76,52 @@ function rodo(port, hostname, options) {
         return;
       }
     } else {
+      const possibleRules = server.rules.filter(
+        (serverRule) =>
+          serverRule.path === req.url &&
+          serverRule.method === req.method &&
+          serverRule.timesCount > 0
+      );
+
+      logError(`could not find match for ${req.method} ${req.url} in rules`);
+
+      possibleRules.forEach(({ headers, fields, files, query }) => {
+        let alreadyLogged = false;
+
+        if (Object.keys(headers).length > 0) {
+          logError('  possible rule:');
+          logError('    headers', headers);
+          alreadyLogged = true;
+        }
+
+        if (Object.keys(fields).length > 0) {
+          if (!alreadyLogged) {
+            logError('  possible rule:');
+            alreadyLogged = true;
+          }
+
+          logError('    fields', fields);
+        }
+
+        if (Object.keys(files).length > 0) {
+          if (!alreadyLogged) {
+            logError('  possible rule:');
+            alreadyLogged = true;
+          }
+
+          logError('    files', files);
+        }
+
+        if (Object.keys(query).length > 0) {
+          if (!alreadyLogged) {
+            logError('  possible rule:');
+            alreadyLogged = true;
+          }
+
+          logError('    query', query);
+        }
+      });
+
       server.calls.push({
         noRule: true,
         method: req.method,
