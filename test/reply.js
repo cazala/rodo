@@ -55,21 +55,44 @@ describe('reply', () => {
   describe('using withFile', () => {
     let jsonCall;
 
-    beforeEach(() => {
-      jsonCall = mock
-        .get('/foo')
-        .reply()
-        .withFile('test/resources/sample.txt');
+    describe('using custom content-type', () => {
+      beforeEach(() => {
+        jsonCall = mock
+          .get('/foo')
+          .reply()
+          .withFile('test/resources/sample.txt')
+          .withHeader('content-type', 'custom');
+      });
+
+      it('should reply a json', () =>
+        request(mock)
+          .get('/foo')
+          .expect(200)
+          .expect((res) => {
+            res.headers['content-type'].should.eql('custom');
+            res.text.should.eql('boo');
+            jsonCall.calls.length.should.eql(1);
+          }));
     });
 
-    it('should reply a json', () =>
-      request(mock)
-        .get('/foo')
-        .expect(200)
-        .expect((res) => {
-          res.text.should.eql('boo');
-          jsonCall.calls.length.should.eql(1);
-        }));
+    describe('using default content-type', () => {
+      beforeEach(() => {
+        jsonCall = mock
+          .get('/foo')
+          .reply()
+          .withFile('test/resources/sample.txt');
+      });
+
+      it('should reply a json', () =>
+        request(mock)
+          .get('/foo')
+          .expect(200)
+          .expect((res) => {
+            res.headers['content-type'].should.eql('text/plain');
+            res.text.should.eql('boo');
+            jsonCall.calls.length.should.eql(1);
+          }));
+    });
   });
 
   describe('with a string', () => {

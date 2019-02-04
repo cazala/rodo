@@ -80,9 +80,9 @@ Response.prototype.send = function send(req, res) {
         try {
           const stream = fs.createReadStream(this.filePath);
 
-          res.writeHead(200, {
-            'Content-Type': mime.lookup(this.filePath)
-          });
+          if (!this.headers['content-type']) {
+            res.setHeader('content-type', mime.lookup(this.filePath));
+          }
 
           stream.pipe(res);
         } catch (error) {
