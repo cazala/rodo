@@ -1,7 +1,7 @@
 'use strict';
 
 const fs = require('fs');
-var mime = require('mime-types');
+const mime = require('mime-types');
 
 function Response(builder, body, options) {
   this.builder = builder;
