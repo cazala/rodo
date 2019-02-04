@@ -185,6 +185,10 @@ Will return specific header with the response.
 
 Will return the specified body with the response.
 
+#### `.withFile(filePath)`
+
+Will return the content of the given file.
+
 #### `.withStatus(status)`
 
 Will change the status code to the one specified.

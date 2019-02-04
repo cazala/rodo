@@ -52,6 +52,26 @@ describe('reply', () => {
         }));
   });
 
+  describe('using withFile', () => {
+    let jsonCall;
+
+    beforeEach(() => {
+      jsonCall = mock
+        .get('/foo')
+        .reply()
+        .withFile('test/resources/sample.txt');
+    });
+
+    it('should reply a json', () =>
+      request(mock)
+        .get('/foo')
+        .expect(200)
+        .expect((res) => {
+          res.text.should.eql('boo');
+          jsonCall.calls.length.should.eql(1);
+        }));
+  });
+
   describe('with a string', () => {
     let stringCall;
 

@@ -1,5 +1,8 @@
 'use strict';
 
+const fs = require('fs');
+var mime = require('mime-types');
+
 function Response(builder, body, options) {
   this.builder = builder;
   this.body = body;
@@ -37,6 +40,12 @@ Response.prototype.withBody = function withBody(body) {
   return this;
 };
 
+Response.prototype.withFile = function withFile(filePath) {
+  this.filePath = filePath;
+
+  return this;
+};
+
 Response.prototype.withStatus = function withStatus(status) {
   this.status = status;
 
@@ -67,15 +76,29 @@ Response.prototype.send = function send(req, res) {
       // eslint-disable-next-line no-param-reassign
       res.statusCode = this.status;
 
-      const body = answer(this.body, req);
-      res.end(body, (err) => {
-        if (err) {
-          reject(err);
-          return;
-        }
+      if (this.filePath) {
+        try {
+          const stream = fs.createReadStream(this.filePath);
 
-        resolve(body);
-      });
+          res.writeHead(200, {
+            'Content-Type': mime.lookup(this.filePath)
+          });
+
+          stream.pipe(res);
+        } catch (error) {
+          reject(error);
+        }
+      } else {
+        const body = answer(this.body, req);
+        res.end(body, (err) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+
+          resolve(body);
+        });
+      }
 
       if (
         this.builder &&

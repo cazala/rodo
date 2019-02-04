@@ -44,6 +44,7 @@
   "homepage": "https://github.com/nescalante/rodo#readme",
   "dependencies": {
     "debug": "^3.2.6",
+    "mime-types": "^2.1.21",
     "multiparty": "^4.2.1",
     "type-is": "^1.6.16"
   }
